@@ -1,3 +1,11 @@
+# Generated Files
+*.freezed.dart
+*.config.dart
+*.g.dart
+*.gr.dart
+lib/generated/
+coverage/
+
 # Miscellaneous
 *.class
 *.log
