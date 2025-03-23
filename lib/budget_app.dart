@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:budget_mobile/di/injection.dart';
 import 'package:budget_mobile/core/routes/router.dart';
+import 'package:budget_mobile/generated/l10n.dart' show S;
 
 class BudgetApp extends StatelessWidget {
   const BudgetApp({super.key});
@@ -40,13 +42,13 @@ class _BudgetApp extends StatelessWidget {
           );
         },
         onGenerateTitle: (context) => 'Budget App',
-        // localizationsDelegates: const [
-        //   S.delegate,
-        //   GlobalMaterialLocalizations.delegate,
-        //   GlobalWidgetsLocalizations.delegate,
-        //   GlobalCupertinoLocalizations.delegate,
-        // ],
-        // supportedLocales: S.delegate.supportedLocales,
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
         locale: const Locale('es'),
         routerConfig: locator<AppRouter>().config(),
       ),

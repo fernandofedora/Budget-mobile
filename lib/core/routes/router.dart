@@ -11,6 +11,11 @@ class AppRouter extends RootStackRouter {
   List<CustomRoute> get routes => [
     CustomRoute(
       initial: true,
+      path: '/signup',
+      page: SignupRoute.page,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
       path: '/load',
       page: LoadRoute.page,
       transitionsBuilder: TransitionsBuilders.fadeIn,
