@@ -11,14 +11,8 @@ class AuthDataSource implements IAuthDataSource {
   const AuthDataSource(this._client);
 
   @override
-  Future<String> register({
-    required String email,
-    required String password,
-  }) async {
-    final response = await _client.post(
-      registerUrl,
-      data: {'email': email, 'password': password},
-    );
+  Future<String> register({required String email, required String password}) async {
+    final response = await _client.post(registerUrl, data: {'email': email, 'password': password});
 
     if (response.statusCode == 201) {
       return response.data['token'];
@@ -29,10 +23,7 @@ class AuthDataSource implements IAuthDataSource {
 
   @override
   Future<String> login({required String email, required String password}) async {
-    final response = await _client.post(
-      loginUrl,
-      data: {'email': email, 'password': password},
-    );
+    final response = await _client.post(loginUrl, data: {'email': email, 'password': password});
 
     if (response.statusCode == 200) {
       return response.data['token'];
@@ -40,6 +31,4 @@ class AuthDataSource implements IAuthDataSource {
       return '';
     }
   }
-
-  
 }

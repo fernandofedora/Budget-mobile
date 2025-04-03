@@ -9,10 +9,19 @@ part 'auth_provider.g.dart';
 
 @riverpod
 Future<bool> register(Ref ref, String email, String password) async {
-  final token = await locator<IAuthRepository>().register(
-    email: email,
-    password: password,
-  );
+  final token = await locator<IAuthRepository>().register(email: email, password: password);
+
+  if (token.isEmpty) {
+    return false;
+  }
+  // Save token to shared preferences
+  locator<SPService>().saveToken(token);
+  return true;
+}
+
+@riverpod
+Future<bool> login(Ref ref, String email, String password) async {
+  final token = await locator<IAuthRepository>().login(email: email, password: password);
 
   if (token.isEmpty) {
     return false;
