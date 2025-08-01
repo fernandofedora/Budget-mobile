@@ -25,5 +25,10 @@ class AppRouter extends RootStackRouter {
       page: HomeRoute.page,
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
+    CustomRoute(
+      path: '/edit-expense',
+      page: EditExpenseRoute.page,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
   ];
 }

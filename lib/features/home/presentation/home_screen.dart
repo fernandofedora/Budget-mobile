@@ -1,3 +1,6 @@
+import 'package:budget_mobile/core/routes/router.gr.dart';
+import 'package:budget_mobile/features/expense/application/expense_provider.dart';
+import 'package:budget_mobile/features/home/domain/budget.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final budgetsData = ref.watch(budgetsProvider);
+    final expensesData = ref.watch(expensesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -86,22 +90,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             budgetsData.budgets.isEmpty
                 ? const Text('No hay presupuestos creados')
                 : ListView.builder(
-                  itemCount: budgetsData.budgets.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    final budget = budgetsData.budgets[index];
-                    return ListTile(
-                      title: Text(budget.name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    itemCount: budgetsData.budgets.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final budget = budgetsData.budgets[index];
+                      return ExpansionTile(
+                        title: Text(budget.name),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Monto: ${budget.amount.toString()}'),
+                            Text('Restante: ${budget.remaining.toString()}'),
+                            ElevatedButton(
+                              onPressed: () => _openDialog(budget),
+                              child: const Text('Agregar Gastos'),
+                            ),
+                          ],
+                        ),
+                        onExpansionChanged: (value) async {
+                          if (value) {
+                            await ref
+                                .read(expensesProvider.notifier)
+                                .fetchExpenses(budgetId: budget.id);
+                          }
+                        },
+
                         children: [
-                          Text('Monto: ${budget.amount.toString()}'),
-                          Text('Restante: ${budget.remaining.toString()}'),
+                          Consumer(
+                            builder: (context, ref, child) {
+                              return ListView.builder(
+                                itemCount: expensesData.expenses.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  final expense = expensesData.expenses[index];
+                                  return ListTile(
+                                    title: Text(expense.description),
+                                    subtitle: Column(
+                                      children: [
+                                        Text('Monto: ${expense.amount.toString()}'),
+                                        Text('Fecha: ${expense.date}'),
+                                      ],
+                                    ),
+                                    trailing: ElevatedButton(
+                                      onPressed: () {
+                                        context.router.push(
+                                          EditExpenseRoute(
+                                            id: expense.id,
+                                            budgetId: budget.id,
+                                            description: expense.description,
+                                            amount: expense.amount,
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Editar'),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         ],
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  ),
           ],
         ),
       ),
@@ -123,5 +174,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _nameCtrl.clear();
     _amountCtrl.clear();
     setState(() => _loading = false);
+  }
+
+  void _openDialog(Budget budget) {
+    final descriptionController = TextEditingController();
+    final amountController = TextEditingController();
+
+    showDialog(
+      context: context,
+
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Gastos'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Descripcion',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: amountController,
+                decoration: const InputDecoration(labelText: 'Monto', border: OutlineInputBorder()),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await ref
+                      .read(expensesProvider.notifier)
+                      .createExpense(
+                        description: descriptionController.text,
+                        amount: double.parse(amountController.text),
+                        budgetId: budget.id,
+                      );
+                },
+                child: const Text('Agregar'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
