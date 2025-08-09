@@ -10,8 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  await di.configure();
-  await di.locator.isReady<SPService>();
+  await Future.wait([di.configure(), di.locator.isReady<SPService>()]);
 
   runApp(const ProviderScope(child: BudgetApp()));
 }

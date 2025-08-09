@@ -10,11 +10,7 @@ import 'package:budget_mobile/core/network/interceptors/dio_interceptor.dart';
 //* Get instance of GetIt.
 final locator = GetIt.instance;
 
-@InjectableInit(
-  initializerName: r'$initGetIt',
-  preferRelativeImports: true,
-  asExtension: false,
-)
+@InjectableInit(initializerName: r'$initGetIt', preferRelativeImports: true, asExtension: false)
 Future<void> configure() async => $initGetIt(locator);
 
 @module

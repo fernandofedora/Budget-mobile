@@ -33,15 +33,12 @@ class _BudgetApp extends StatelessWidget {
           final MediaQueryData media = MediaQuery.of(context);
           return MediaQuery(
             data: media.copyWith(
-              textScaler: media.textScaler.clamp(
-                minScaleFactor: 1.0,
-                maxScaleFactor: 1.2,
-              ),
+              textScaler: media.textScaler.clamp(minScaleFactor: 1.0, maxScaleFactor: 1.2),
             ),
             child: child!,
           );
         },
-        onGenerateTitle: (context) => 'Budget App',
+        onGenerateTitle: (context) => S.of(context).appTitle,
         localizationsDelegates: const [
           S.delegate,
           GlobalMaterialLocalizations.delegate,

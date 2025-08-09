@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 
 import 'package:budget_mobile/core/routes/router.gr.dart';
+import 'package:budget_mobile/core/routes/guards/auth_guard.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
@@ -10,7 +11,6 @@ class AppRouter extends RootStackRouter {
   @override
   List<CustomRoute> get routes => [
     CustomRoute(
-      initial: true,
       path: '/login',
       page: LoginRoute.page,
       transitionsBuilder: TransitionsBuilders.fadeIn,
@@ -21,10 +21,13 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
     CustomRoute(
+      initial: true,
       path: '/home',
       page: HomeRoute.page,
       transitionsBuilder: TransitionsBuilders.fadeIn,
+      guards: [CheckIfUserIsAuthenticated()],
     ),
+    // TODO: move this to a dialog form
     CustomRoute(
       path: '/edit-expense',
       page: EditExpenseRoute.page,
